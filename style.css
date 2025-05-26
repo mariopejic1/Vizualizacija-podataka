@@ -1,0 +1,32 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.hidden {
+  display: none;
+}
+
+svg {
+  border: 1px solid #ccc;
+}
+
+.country {
+  fill: #d3d3d3;
+  stroke: white;
+  stroke-width: 0.5;
+  cursor: pointer;
+}
+
+.country:hover {
+  fill: orange;
+}
