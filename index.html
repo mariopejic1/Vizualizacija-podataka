@@ -2,14 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vizualizacija Olimpijskih medalja</title>
+  <title>Početna</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Početna</a></li>
+      <li><a href="athletes.html">Sportaši</a></li>
+    </ul>
+  </nav>
+
   <h1>Olimpijske medalje po državama</h1>
   <div id="tooltip" class="hidden"></div>
-  <svg id="map" width="960" height="600"></svg>
+  <svg id="map" width="1060" height="700"></svg>
+  <svg id="barChart" width="450" height="700"></svg>
   <script src="main.js"></script>
 </body>
 </html>

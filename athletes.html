@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sportaši</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="athletes.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Početna</a></li>
+      <li><a href="athletes.html">Sportaši</a></li>
+    </ul>
+  </nav>
+  
+  <div class="container">
+    <div class="sidebar">
+      <input type="text" id="search" placeholder="Pretraži sportaše...">
+      <ul id="athlete-list"></ul>
+    </div>
+    <div class="comparison">
+      <div class="slot" id="slot1">
+        <h2>Sportaš 1</h2>
+        <div class="athlete-info"></div>
+        <div class="medal-info"></div>
+      </div>
+      <div class="slot" id="slot2">
+        <h2>Sportaš 2</h2>
+        <div class="athlete-info"></div>
+        <div class="medal-info"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="athletes.js"></script>
+
+</body>
+</html>

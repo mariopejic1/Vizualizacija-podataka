@@ -1,6 +1,36 @@
 body {
   font-family: sans-serif;
   text-align: center;
+  margin: 0;
+}
+
+nav {
+  background-color: black;
+  padding: 10px 0;
+  width: 100%;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* centriraj stavke */
+}
+
+nav ul li {
+  margin: 0 20px; /* razmak lijevo/desno između stavki */
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
 }
 
 #tooltip {
@@ -30,3 +60,4 @@ svg {
 .country:hover {
   fill: orange;
 }
+

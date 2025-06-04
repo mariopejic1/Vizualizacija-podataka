@@ -1,0 +1,69 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f2f2f2;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+}
+
+#search {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+#athlete-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#athlete-list li {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+#athlete-list li:hover {
+  background-color: #ddd;
+}
+
+.comparison {
+  display: flex;
+  flex: 1;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.slot {
+  width: 45%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slot h2 {
+  margin-top: 0;
+}
+
+.medal-info h4 {
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
