@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Sportaši</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="athletes.css">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="athletes.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -15,27 +15,36 @@
       <li><a href="athletes.html">Sportaši</a></li>
     </ul>
   </nav>
-  
+
   <div class="container">
     <div class="sidebar">
-      <input type="text" id="search" placeholder="Pretraži sportaše...">
+      <input type="text" id="search" placeholder="Pretraži sportaše..." />
       <ul id="athlete-list"></ul>
     </div>
     <div class="comparison">
       <div class="slot" id="slot1">
-        <h2>Sportaš 1</h2>
+        <h2>
+          Sportaš 1
+          <button class="replace-btn" data-slot="0">Postavi</button>
+        </h2>
         <div class="athlete-info"></div>
         <div class="medal-info"></div>
+        <svg class="bar-chart chart-year"></svg>
+        <svg class="bar-chart chart-sport"></svg>
       </div>
       <div class="slot" id="slot2">
-        <h2>Sportaš 2</h2>
+        <h2>
+          Sportaš 2
+          <button class="replace-btn" data-slot="1">Postavi</button>
+        </h2>
         <div class="athlete-info"></div>
         <div class="medal-info"></div>
+        <svg class="bar-chart chart-year"></svg>
+        <svg class="bar-chart chart-sport"></svg>
       </div>
     </div>
   </div>
 
   <script src="athletes.js"></script>
-
 </body>
 </html>
