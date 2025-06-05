@@ -4,8 +4,12 @@ body {
   margin: 0;
 }
 
+h1 {
+  margin: 10px;
+}
+
 nav {
-  background-color: black;
+  background-color: #000;
   padding: 10px 0;
   width: 100%;
 }
@@ -15,15 +19,15 @@ nav ul {
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: center; /* centriraj stavke */
+  justify-content: center;
 }
 
 nav ul li {
-  margin: 0 20px; /* razmak lijevo/desno između stavki */
+  margin: 0 20px;
 }
 
 nav ul li a {
-  color: white;
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
   font-size: 16px;
@@ -35,29 +39,137 @@ nav ul li a:hover {
 
 #tooltip {
   position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
   pointer-events: none;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-.hidden {
+#tooltip.hidden {
   display: none;
 }
 
-svg {
-  border: 1px solid #ccc;
+#hostCitySelector {
+  text-align: center;
+  margin: 10px 0;
 }
 
-.country {
+#citySelect {
+  padding: 5px;
+  font-size: 14px;
+}
+
+#detailsContainer {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+#detailsContainer h3 {
+  margin: 10px 0;
+}
+
+#map .country {
   fill: #d3d3d3;
-  stroke: white;
+  stroke: #999;
   stroke-width: 0.5;
   cursor: pointer;
 }
 
-.country:hover {
-  fill: orange;
+#map .country:hover {
+  fill: #1E90FF; /* Blue to match comparemedals.js */
 }
 
+#map .city circle {
+  fill: red;
+  stroke: #000;
+  stroke-width: 0.5;
+  cursor: pointer;
+}
+
+#map .city text {
+  font-size: 2.5px;
+  fill: #000;
+  pointer-events: none;
+}
+
+#barChart .bar {
+  fill: #1E90FF; /* For host city bars */
+}
+
+#barChart .bar-label {
+  font-size: 12px;
+  fill: #333;
+  text-anchor: middle;
+}
+
+#countryChartsContainer {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#countryChartsContainer h3 {
+  margin: 10px 0;
+  color: #333;
+}
+
+#medalsByYearChart .line {
+  fill: none;
+  stroke: #FFD700; /* Gold */
+  stroke-width: 2;
+}
+
+#medalsByYearChart .dot {
+  fill: #FFD700;
+}
+
+#topAthletesChart .bar-gold,
+#topDisciplinesChart .bar-gold {
+  fill: #FFD700; /* Gold */
+}
+
+#topAthletesChart .bar-silver,
+#topDisciplinesChart .bar-silver {
+  fill: #C0C0C0; /* Silver */
+}
+
+#topAthletesChart .bar-bronze,
+#topDisciplinesChart .bar-bronze {
+  fill: #CD7F32; /* Bronze */
+}
+
+#topAthletesChart .bar-label,
+#topDisciplinesChart .bar-label {
+  font-size: 10px;
+  fill: #333;
+  text-anchor: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.axis {
+  font-size: 10px;
+  fill: #333;
+}
+
+.axis path,
+.axis line {
+  stroke: #333;
+}
+
+.bar .text {
+  font-size: 8px;
+  font-weight: bold;
+  fill: #000;
+  text-anchor: middle;
+}
+
+svg {
+  border: 1px solid #ccc;
+  margin: 2px;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympic Medal Animation</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0px;
+            background-color: #f4f4f4;
+        }
+        #topCountries {
+            margin: 20px auto;
+            display: block;
+            background: #fff;
+            border: 1px solid #ccc;
+        }
+        .country-bar {
+            fill: #1E90FF;
+        }
+        .country-label {
+            font-size: 12px;
+            fill: #333;
+        }
+        .country-name {
+            font-size: 12px;
+            fill: #333;
+            text-anchor: end;
+        }
+        #controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #slider {
+            width: 100%;
+            max-width: 800px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        h1 {
+            text-align: center;
+        }
+        #yearLabel {
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+        }
+        #yearContainer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        #yearContainer span {
+            display: inline; /* Ensure spans stay inline */
+        }
+        .tooltip {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Početna</a></li>
+            <li><a href="athletes.html">Sportaši</a></li>
+            <li><a href="comparemedals.html">Medalje po godinama</a></li>
+        </ul>
+    </nav>
+    <h1>Top 10 država po ukupnim medaljama tijekom godina</h1>
+    <div>
+        <svg id="topCountries"></svg>
+    </div>
+    <div id="controls">
+        <button id="startButton">Pokreni</button>
+        <button id="stopButton" disabled>Zaustavi</button>
+    </div>
+    <input type="range" id="slider" min="1896" max="2016" value="1896" step="1">
+    <div id="yearContainer">
+        <span>Godina: </span><span id="yearLabel">1896</span>
+    </div>  
+    <script src="comparemedals.js"></script>
+</body>
+</html>

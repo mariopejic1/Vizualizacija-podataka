@@ -7,18 +7,29 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-
   <nav>
     <ul>
       <li><a href="index.html">Početna</a></li>
       <li><a href="athletes.html">Sportaši</a></li>
+      <li><a href="comparemedals.html">Medalje po godinama</a></li>
     </ul>
   </nav>
 
   <h1>Olimpijske medalje po državama</h1>
   <div id="tooltip" class="hidden"></div>
-  <svg id="map" width="1060" height="700"></svg>
+  <svg id="map" width="960" height="700"></svg>
   <svg id="barChart" width="450" height="700"></svg>
+  <div id="detailsContainer">
+    <h3>Detalji</h3>
+    <div id="detailsContent">Kliknite na državu ili grad na karti ili odaberite grad za prikaz detalja.</div>
+  </div>
+  <div id="countryChartsContainer" style="display: none;">
+    <h3>Detalji po državi</h3>
+    <svg id="medalsByYearChart" width="960" height="300"></svg>
+    <svg id="topAthletesChart" width="960" height="300"></svg>
+    <svg id="topDisciplinesChart" width="960" height="300"></svg>
+  </div>
+
   <script src="main.js"></script>
 </body>
 </html>
