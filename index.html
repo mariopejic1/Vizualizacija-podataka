@@ -19,10 +19,9 @@
   <div id="tooltip" class="hidden"></div>
   <svg id="map" width="960" height="700"></svg>
   <svg id="barChart" width="450" height="700"></svg>
-  <div id="detailsContainer">
-    <h3></h3>
-  </div>
-  <div id="hostCityPanel">
+  
+  <div id="hostCityWrapper">
+    <div id="hostCityPanel">
       <label for="yearSelect">Odaberite godinu: </label>
       <select id="yearSelect"></select>
     </div>
@@ -33,9 +32,12 @@
   </div>
   <div id="countryChartsContainer" style="display: none;">
     <h3>Detalji po državi</h3>
-    <svg id="medalsByYearChart" width="960" height="300"></svg>
-    <svg id="topAthletesChart" width="960" height="300"></svg>
-    <svg id="topDisciplinesChart" width="960" height="300"></svg>
+      <h4>Ukupan broj medalja po natjecanju</h4>
+      <svg id="medalsByYearChart" width="960" height="300"></svg>
+      <h4>10 naujspješnijih sportaša</h4>
+      <svg id="topAthletesChart" width="960" height="300"></svg>
+      <h4>10 naujspješnijih disciplina</h4>
+      <svg id="topDisciplinesChart" width="960" height="300"></svg>
   </div>
 
   <script src="main.js"></script>

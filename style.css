@@ -174,10 +174,24 @@ svg {
   margin: 2px;
 }
 
-#hostCityPanel,
-#hostCityPanel ~ h4,
-#hostCityPanel ~ svg#topCityCountriesChart,
-#hostCityPanel ~ h4,
-#hostCityPanel ~ svg#topCityAthletesChart {
+#hostCityWrapper {
   display: none;
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+.country {
+  pointer-events: auto;
+}
+
+.city {
+  pointer-events: all;
+}
+
+.city circle {
+  fill: red;
+  stroke: black;
+  stroke-width: 0.5;
 }

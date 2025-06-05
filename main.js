@@ -64,6 +64,8 @@ Promise.all([
 
   // Filter valid medal entries
   const medalData = athleteData.filter(d => d.Medal === "Gold" || d.Medal === "Silver" || d.Medal === "Bronze");
+  console.log(`Filtered medalData size: ${medalData.length}`); // Debug
+  console.log(`medalData sample:`, medalData.slice(0, 5)); // Debug sample
 
   // Aggregate medals by country
   const countryMedals = {};
@@ -82,39 +84,39 @@ medalData.forEach(d => {
   const city = d.City;
   const region = nocToRegion.get(d.NOC);
   const year = +d.Year;
-  const athleteKey = `${d.ID}_${d.Name}`; // Unique key using ID + Name
+  const athleteKey = `${d.ID}_${d.Name}`;
   const athleteName = d.Name;
-  if (!city || !region || !cityCoordinates[city] || !athleteName) {
-    console.log(`Skipping invalid row:`, d); // Debug invalid rows
+  const cityKey = Object.keys(cityCoordinates).find(k => k.toLowerCase() === city?.toLowerCase());
+  if (!city || !region || !athleteName || !cityKey) {
+    console.log(`Skipping invalid row:`, d);
     return;
   }
-  if (!cityMedals[city]) cityMedals[city] = { years: new Set(), medalsByYear: {} };
-  cityMedals[city].years.add(year);
-  if (!cityMedals[city].medalsByYear[year]) {
-    cityMedals[city].medalsByYear[year] = { countries: {}, athletes: {} };
+  if (!cityMedals[cityKey]) cityMedals[cityKey] = { years: new Set(), medalsByYear: {} };
+  cityMedals[cityKey].years.add(year);
+  if (!cityMedals[cityKey].medalsByYear[year]) {
+    cityMedals[cityKey].medalsByYear[year] = { countries: {}, athletes: {} };
   }
-  if (!cityMedals[city].medalsByYear[year].countries[region]) {
-    cityMedals[city].medalsByYear[year].countries[region] = { gold: 0, silver: 0, bronze: 0 };
+  if (!cityMedals[cityKey].medalsByYear[year].countries[region]) {
+    cityMedals[cityKey].medalsByYear[year].countries[region] = { gold: 0, silver: 0, bronze: 0 };
   }
-  if (!cityMedals[city].medalsByYear[year].athletes[athleteKey]) {
-    cityMedals[city].medalsByYear[year].athletes[athleteKey] = { name: athleteName, gold: 0, silver: 0, bronze: 0 };
+  if (!cityMedals[cityKey].medalsByYear[year].athletes[athleteKey]) {
+    cityMedals[cityKey].medalsByYear[year].athletes[athleteKey] = { name: athleteName, gold: 0, silver: 0, bronze: 0 };
   }
   if (d.Medal === "Gold") {
-    cityMedals[city].medalsByYear[year].countries[region].gold++;
-    cityMedals[city].medalsByYear[year].athletes[athleteKey].gold++;
+    cityMedals[cityKey].medalsByYear[year].countries[region].gold++;
+    cityMedals[cityKey].medalsByYear[year].athletes[athleteKey].gold++;
   } else if (d.Medal === "Silver") {
-    cityMedals[city].medalsByYear[year].countries[region].silver++;
-    cityMedals[city].medalsByYear[year].athletes[athleteKey].silver++;
+    cityMedals[cityKey].medalsByYear[year].countries[region].silver++;
+    cityMedals[cityKey].medalsByYear[year].athletes[athleteKey].silver++;
   } else if (d.Medal === "Bronze") {
-    cityMedals[city].medalsByYear[year].countries[region].bronze++;
-    cityMedals[city].medalsByYear[year].athletes[athleteKey].bronze++;
+    cityMedals[cityKey].medalsByYear[year].countries[region].bronze++;
+    cityMedals[cityKey].medalsByYear[year].athletes[athleteKey].bronze++;
   }
-  console.log(`Medal for ${athleteName} (${athleteKey}) in ${city} ${year}: ${d.Medal}`); // Debug medal processing
 });
 Object.values(cityMedals).forEach(city => {
   city.years = Array.from(city.years).sort((a, b) => a - b);
 });
-
+console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
 
   // Aggregate medals by country and year
   const medalsByYear = {};
@@ -131,17 +133,18 @@ Object.values(cityMedals).forEach(city => {
 
   // Aggregate medals by athlete and country
   const athleteMedals = {};
-  rowIndex = 0;
   medalData.forEach(d => {
     const region = nocToRegion.get(d.NOC);
+    const athleteKey = `${d.ID}_${d.Name}`;
     const athlete = d.Name;
     if (!region || !athlete) return;
     if (!athleteMedals[region]) athleteMedals[region] = {};
-    const key = `${athlete}_${rowIndex++}`;
-    if (!athleteMedals[region][key]) athleteMedals[region][key] = { name: athlete, gold: 0, silver: 0, bronze: 0 };
-    if (d.Medal === "Gold") athleteMedals[region][key].gold++;
-    if (d.Medal === "Silver") athleteMedals[region][key].silver++;
-    if (d.Medal === "Bronze") athleteMedals[region][key].bronze++;
+    if (!athleteMedals[region][athleteKey]) {
+      athleteMedals[region][athleteKey] = { name: athlete, gold: 0, silver: 0, bronze: 0 };
+    }
+    if (d.Medal === "Gold") athleteMedals[region][athleteKey].gold++;
+    else if (d.Medal === "Silver") athleteMedals[region][athleteKey].silver++;
+    else if (d.Medal === "Bronze") athleteMedals[region][athleteKey].bronze++;
   });
 
   // Aggregate medals by discipline and country
@@ -176,24 +179,23 @@ Object.values(cityMedals).forEach(city => {
     .on("mouseover", (event, d) => {
       const region = d.properties.name;
       const data = countryMedals[region] || { gold: 0, silver: 0, bronze: 0 };
-      d3.select(event.currentTarget).attr("fill", "#1E90FF");
+      d3.select(event.currentTarget).attr("fill", "Gold");
       tooltip
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY + 10}px`)
         .classed("hidden", false)
         .html(`
-          <strong>${region}</strong><br>
-          🥇 ${data.gold}<br>
-          🥈 ${data.silver}<br>
-          🥉 ${data.bronze}<br>
-          Ukupno: ${data.gold + data.silver + data.bronze}
+          <h4><strong>${region}</strong></h4>
+          <p>🥇 ${data.gold}</p>
+          <p>🥈 ${data.silver}</p>
+          <p>🥉 ${data.bronze}</p>
+          <p>Ukupno: ${data.gold + data.silver + data.bronze}</p>
         `);
     })
     .on("mouseout", (event) => {
       d3.select(event.currentTarget).attr("fill", "#d3d3d3");
       tooltip.classed("hidden", true);
     })
-    
     .on("click", (event, d) => {
       const region = d.properties.name;
       const data = countryMedals[region] || { gold: 0, silver: 0, bronze: 0 };
@@ -203,7 +205,6 @@ Object.values(cityMedals).forEach(city => {
       updateCountryCharts(region);
       document.getElementById('countryChartsContainer').scrollIntoView({ behavior: 'smooth' });
     });
-    
 
   // Host cities data
   const hostCitiesData = Object.keys(cityMedals).map(city => ({
@@ -213,6 +214,7 @@ Object.values(cityMedals).forEach(city => {
       season: medalData.find(d => d.City === city && +d.Year === year)?.Season || "Summer"
     })).sort((a, b) => a.year - b.year)
   }));
+  console.log(`hostCitiesData:`, hostCitiesData);
 
   // Draw host cities
   mapGroup.selectAll("g.city")
@@ -226,11 +228,12 @@ Object.values(cityMedals).forEach(city => {
     .each(function(d) {
       const group = d3.select(this);
       group.append("circle")
-        .attr("r", 2.5)
+        .attr("r", 5)
         .attr("fill", "red")
         .attr("stroke", "black")
         .attr("stroke-width", 0.5)
         .style("cursor", "pointer")
+        .style("pointer-events", "all")
         .on("mouseover", (event) => {
           const tooltipContent = `
             <strong>${d.city}</strong><br>
@@ -248,21 +251,24 @@ Object.values(cityMedals).forEach(city => {
         .on("mouseout", () => {
           tooltip.classed("hidden", true);
         })
-        .on("click", () => {
-          updateHostCityCharts(d.city, d.games[0].year);
+        .on("click", (event) => {
+          console.log(`Clicked city: ${d.city}`);
+          d3.select("#hostCityWrapper").style("display", "block");
+          const year = d.games[0]?.year || cityMedals[d.city].years[0] || 1896;
+          updateHostCityCharts(d.city, year);
           updateYearSelect(d.city, d.games);
           d3.select('#countryChartsContainer').style('display', 'none');
+          document.getElementById('hostCityWrapper').scrollIntoView({ behavior: 'smooth' });
         });
 
       group.append("text")
         .text(d.city)
-        .attr("x", 3.5)
+        .attr("x", 5.5)
         .attr("y", 2)
-        .attr("font-size", "2.5px")
+        .attr("font-size", "4px")
         .attr("fill", "black")
         .style("pointer-events", "none")
         .style("display", "none");
-        
     });
 
   // Zoom functionality
@@ -272,6 +278,8 @@ Object.values(cityMedals).forEach(city => {
       mapGroup.attr("transform", event.transform);
       mapGroup.selectAll("g.city text")
         .style("display", event.transform.k > 2.5 ? "block" : "none");
+      mapGroup.selectAll("g.city circle")
+        .attr("r", 5 / event.transform.k);
     });
   svg.call(zoom);
 
@@ -362,9 +370,8 @@ Object.values(cityMedals).forEach(city => {
       .join("option")
       .attr("value", d => d.year)
       .text(d => `${d.year} (${d.season})`);
-    selectedYear = games[0].year;
+    selectedYear = games[0]?.year || cityMedals[city].years[0] || 1896;
     d3.select("#yearSelect").property("value", selectedYear);
-    updateHostCityCharts(city, selectedYear);
   }
 
   d3.select("#yearSelect").on("change", function() {
@@ -373,9 +380,13 @@ Object.values(cityMedals).forEach(city => {
   });
 
   // Update host city charts
-function updateHostCityCharts(city, year) {
+ function updateHostCityCharts(city, year) {
   selectedCity = city;
   selectedYear = year;
+  console.log(`Updating charts for ${city} ${year}`);
+
+  // Show host city wrapper
+  d3.select("#hostCityWrapper").style("display", "block");
 
   // Update year dropdown
   const yearSelect = d3.select("#yearSelect");
@@ -386,8 +397,14 @@ function updateHostCityCharts(city, year) {
     .enter()
     .append("option")
     .attr("value", d => d)
-    .text(d => d);
+    .text(d => {
+      const season = medalData.find(m => m.City.toLowerCase() === city.toLowerCase() && +m.Year === d)?.Season || "Summer";
+      return `${d} (${season})`;
+    });
   yearSelect.property("value", year);
+  yearSelect.on("change", function() {
+    updateHostCityCharts(city, +this.value);
+  });
 
   // Top countries chart
   const countrySvg = d3.select("#topCityCountriesChart");
@@ -399,66 +416,74 @@ function updateHostCityCharts(city, year) {
     .attr("transform", `translate(${countryMargin.left},${countryMargin.top})`);
 
   const countryData = Object.entries(cityMedals[city]?.medalsByYear[year]?.countries || {})
-    .map(([region, medals], i) => ({
-      key: `${city}_${year}_${region}_${i}`,
+    .map(([region, medals]) => ({
       region,
       ...medals,
       total: medals.gold + medals.silver + medals.bronze
     }))
     .sort((a, b) => b.total - a.total || a.region.localeCompare(b.region))
     .slice(0, 10);
+  console.log(`Country data for ${city} ${year}:`, countryData);
 
-  const xCountry = d3.scaleLinear()
-    .domain([0, d3.max(countryData, d => d.total) || 1])
-    .range([0, countryWidth])
-    .nice();
+  if (countryData.length === 0) {
+    countrySvg.append("text")
+      .attr("x", countryWidth / 2)
+      .attr("y", countryHeight / 2)
+      .attr("text-anchor", "middle")
+      .text("Nema podataka za države");
+  } else {
+    const xCountry = d3.scaleLinear()
+      .domain([0, d3.max(countryData, d => d.total) || 1])
+      .range([0, countryWidth])
+      .nice();
 
-  const yCountry = d3.scaleBand()
-    .domain(countryData.map(d => d.region))
-    .range([0, countryHeight])
-    .padding(0.2);
+    const yCountry = d3.scaleBand()
+      .domain(countryData.map(d => d.region))
+      .range([0, countryHeight])
+      .padding(0.2);
 
-  countryGroup.selectAll("g.bar")
-    .data(countryData, d => d.key)
-    .join("g")
-    .attr("class", "bar")
-    .attr("transform", d => `translate(0,${yCountry(d.region)})`)
-    .each(function(d) {
-      const g = d3.select(this);
-      let offset = 0;
-      ["gold", "silver", "bronze"].forEach(key => {
-        const value = d[key];
-        const width = xCountry(value);
-        g.append("rect")
-          .attr("x", offset)
-          .attr("width", 0)
-          .attr("height", yCountry.bandwidth())
-          .attr("fill", colors[key])
-          .transition()
-          .duration(1000)
-          .attr("width", width);
-        if (width > 15) {
-          g.append("text")
-            .attr("x", offset + width / 2)
-            .attr("y", yCountry.bandwidth() / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "middle")
-            .attr("fill", "black")
-            .attr("font-size", "10px")
-            .text(value);
-        }
-        offset += width;
+    countryGroup.selectAll("g.bar")
+      .data(countryData, d => `${city}_${year}_${d.region}`)
+      .join("g")
+      .attr("class", "bar")
+      .attr("transform", d => `translate(0,${yCountry(d.region)})`)
+      .each(function(d) {
+        const g = d3.select(this);
+        let offset = 0;
+        ["gold", "silver", "bronze"].forEach(key => {
+          const value = d[key];
+          const width = xCountry(value);
+          g.append("rect")
+            .attr("x", offset)
+            .attr("width", 0)
+            .attr("height", yCountry.bandwidth())
+            .attr("fill", colors[key])
+            .transition()
+            .duration(1000)
+            .attr("width", width);
+          if (width > 15) {
+            g.append("text")
+              .attr("x", offset + width / 2)
+              .attr("y", yCountry.bandwidth() / 2)
+              .attr("dy", "0.35em")
+              .attr("text-anchor", "middle")
+              .attr("fill", "black")
+              .attr("font-size", "10px")
+              .text(value);
+          }
+          offset += width;
+        });
       });
-    });
 
-  countryGroup.append("g")
-    .attr("class", "axis")
-    .call(d3.axisLeft(yCountry));
+    countryGroup.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(yCountry));
 
-  countryGroup.append("g")
-    .attr("class", "axis")
-    .attr("transform", `translate(0,${countryHeight})`)
-    .call(d3.axisBottom(xCountry).ticks(5).tickFormat(d3.format("d")));
+    countryGroup.append("g")
+      .attr("class", "axis")
+      .attr("transform", `translate(0,${countryHeight})`)
+      .call(d3.axisBottom(xCountry).ticks(5).tickFormat(d3.format("d")));
+  }
 
   // Top athletes chart
   const athleteSvg = d3.select("#topCityAthletesChart");
@@ -470,95 +495,100 @@ function updateHostCityCharts(city, year) {
     .attr("transform", `translate(${athleteMargin.left},${athleteMargin.top})`);
 
   const athleteData = Object.entries(cityMedals[city]?.medalsByYear[year]?.athletes || {})
-    .map(([athleteKey, data]) => ({
+    .map(([athleteKey, medals]) => ({
       key: athleteKey,
-      athlete: data.name,
-      displayAthlete: data.name.length > 20 ? data.name.slice(0, 20) + "…" : data.name,
-      gold: data.gold,
-      silver: data.silver,
-      bronze: data.bronze,
-      total: data.gold + data.silver + data.bronze
+      name: medals.name,
+      displayName: medals.name.length > 20 ? medals.name.slice(0, 20) + "…" : medals.name,
+      ...medals,
+      total: medals.gold + medals.silver + medals.bronze
     }))
-    .sort((a, b) => b.total - a.total || a.athlete.localeCompare(b.athlete))
+    .filter(d => d.total > 0)
+    .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
     .slice(0, 10);
+  console.log(`Athlete data for ${city} ${year}:`, athleteData);
 
-  console.log(`Top 10 athletes for ${city} ${year}:`, athleteData); // Debug log
+  if (athleteData.length === 0) {
+    athleteSvg.append("text")
+      .attr("x", athleteWidth / 2)
+      .attr("y", athleteHeight / 2)
+      .attr("text-anchor", "middle")
+      .text("Nema podataka za sportaše");
+  } else {
+    const xAthlete = d3.scaleLinear()
+      .domain([0, d3.max(athleteData, d => d.total) || 1])
+      .range([0, athleteWidth])
+      .nice();
 
-  const xAthlete = d3.scaleLinear()
-    .domain([0, d3.max(athleteData, d => d.total) || 1])
-    .range([0, athleteWidth])
-    .nice();
+    const yAthlete = d3.scaleBand()
+      .domain(athleteData.map(d => d.displayName))
+      .range([0, athleteHeight])
+      .padding(0.2);
 
-  const yAthlete = d3.scaleBand()
-    .domain(athleteData.map(d => d.displayAthlete))
-    .range([0, athleteHeight])
-    .padding(0.2);
-
-  athleteGroup.selectAll("g.bar")
-    .data(athleteData, d => d.key)
-    .join("g")
-    .attr("class", "bar")
-    .attr("transform", d => `translate(0,${yAthlete(d.displayAthlete)})`)
-    .each(function(d) {
-      const g = d3.select(this);
-      let offset = 0;
-      ["gold", "silver", "bronze"].forEach(key => {
-        const value = d[key];
-        const width = xAthlete(value);
-        g.append("rect")
-          .attr("x", offset)
-          .attr("width", 0)
-          .attr("height", yAthlete.bandwidth())
-          .attr("fill", colors[key])
-          .transition()
-          .duration(1000)
-          .attr("width", width);
-        if (width > 15) {
-          g.append("text")
-            .attr("x", offset + width / 2)
-            .attr("y", yAthlete.bandwidth() / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "middle")
-            .attr("fill", "black")
-            .attr("font-size", "10px")
-            .text(value);
-        }
-        offset += width;
+    athleteGroup.selectAll("g.bar")
+      .data(athleteData, d => d.key)
+      .join("g")
+      .attr("class", "bar")
+      .attr("transform", d => `translate(0,${yAthlete(d.displayName)})`)
+      .each(function(d) {
+        const g = d3.select(this);
+        let offset = 0;
+        ["gold", "silver", "bronze"].forEach(key => {
+          const value = d[key];
+          const width = xAthlete(value);
+          g.append("rect")
+            .attr("x", offset)
+            .attr("width", 0)
+            .attr("height", yAthlete.bandwidth())
+            .attr("fill", colors[key])
+            .transition()
+            .duration(1000)
+            .attr("width", width);
+          if (width > 15) {
+            g.append("text")
+              .attr("x", offset + width / 2)
+              .attr("y", yAthlete.bandwidth() / 2)
+              .attr("dy", "0.35em")
+              .attr("text-anchor", "middle")
+              .attr("fill", "black")
+              .attr("font-size", "10px")
+              .text(value);
+          }
+          offset += width;
+        });
       });
-    });
 
-  athleteGroup.selectAll(".bar-label")
-    .data(athleteData, d => d.key)
-    .join("text")
-    .attr("class", "bar-label")
-    .attr("x", -5)
-    .attr("y", d => yAthlete(d.displayAthlete) + yAthlete.bandwidth() / 2)
-    .attr("dy", "0.35em")
-    .attr("text-anchor", "end")
-    .on("mouseover", (event, d) => {
-      d3.select("#tooltip")
-        .style("left", `${event.pageX + 10}px`)
-        .style("top", `${event.pageY + 10}px`)
-        .classed("hidden", false)
-        .html(d.athlete);
-    })
-    .on("mouseout", () => {
-      d3.select("#tooltip").classed("hidden", true);
-    });
+    athleteGroup.selectAll(".bar-label")
+      .data(athleteData, d => d.key)
+      .join("text")
+      .attr("class", "bar-label")
+      .attr("x", -5)
+      .attr("y", d => yAthlete(d.displayName) + yAthlete.bandwidth() / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "end")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY + 10}px`)
+          .classed("hidden", false)
+          .html(d.name);
+      })
+      .on("mouseout", () => {
+        tooltip.classed("hidden", true);
+      });
 
-  athleteGroup.append("g")
-    .attr("class", "axis")
-    .call(d3.axisLeft(yAthlete));
+    athleteGroup.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(yAthlete));
 
-  athleteGroup.append("g")
-    .attr("class", "axis")
-    .attr("transform", `translate(0,${athleteHeight})`)
-    .call(d3.axisBottom(xAthlete).ticks(5).tickFormat(d3.format("d")));
+    athleteGroup.append("g")
+      .attr("class", "axis")
+      .attr("transform", `translate(0,${athleteHeight})`)
+      .call(d3.axisBottom(xAthlete).ticks(5).tickFormat(d3.format("d")));
+  }
 
   // Update details
   const cityData = Object.entries(cityMedals[city]?.medalsByYear[year]?.countries || {})
-    .map(([country, medals], i) => ({
-      key: `${city}_${year}_${country}_${i}`,
+    .map(([country, medals]) => ({
       country,
       ...medals,
       total: medals.gold + medals.silver + medals.bronze
@@ -568,10 +598,9 @@ function updateHostCityCharts(city, year) {
   cityData.city = city;
   updateDetails(cityData, 'city');
 
-  // Scroll to host city panel
-  document.getElementById('hostCityPanel').scrollIntoView({ behavior: 'smooth' });
+  // Scroll to host city wrapper
+  document.getElementById('hostCityWrapper').scrollIntoView({ behavior: 'smooth' });
 }
-
 
   function updateCountryCharts(region) {
     d3.select("#countryChartsContainer").style("display", "block");
@@ -609,7 +638,9 @@ function updateHostCityCharts(city, year) {
 
     yearGroup.append("path")
       .datum(yearData)
-      .attr("class", "line")
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
       .attr("d", line);
 
     yearGroup.selectAll(".dot")
@@ -619,6 +650,7 @@ function updateHostCityCharts(city, year) {
       .attr("cx", d => xYear(d.year))
       .attr("cy", d => yYear(d.total))
       .attr("r", 3)
+      .attr("fill", "steelblue")
       .on("mouseover", (event, d) => {
         tooltip
           .style("left", `${event.pageX + 10}px`)
@@ -641,13 +673,11 @@ function updateHostCityCharts(city, year) {
 
     // Bar chart: Top 10 athletes
     const athleteData = Object.entries(athleteMedals[region] || {})
-      .map(([key, medals], i) => ({
-        key: `${region}_${key}_${i}`,
+      .map(([key, medals]) => ({
+        key,
         athlete: medals.name,
         displayAthlete: medals.name.length > 20 ? medals.name.slice(0, 20) + "…" : medals.name,
-        gold: medals.gold,
-        silver: medals.silver,
-        bronze: medals.bronze,
+        ...medals,
         total: medals.gold + medals.silver + medals.bronze
       }))
       .sort((a, b) => b.total - a.total || a.athlete.localeCompare(b.athlete))
@@ -685,13 +715,15 @@ function updateHostCityCharts(city, year) {
             .attr("x", offset)
             .attr("width", width)
             .attr("height", yAthlete.bandwidth())
-            .attr("class", `bar-${key}`);
+            .attr("fill", colors[key]);
           if (width > 15) {
             g.append("text")
               .attr("x", offset + width / 2)
               .attr("y", yAthlete.bandwidth() / 2)
               .attr("dy", "0.35em")
-              .attr("class", "text")
+              .attr("text-anchor", "middle")
+              .attr("fill", "black")
+              .attr("font-size", "10px")
               .text(value);
           }
           offset += width;
@@ -728,13 +760,10 @@ function updateHostCityCharts(city, year) {
 
     // Bar chart: Top 10 disciplines
     const disciplineData = Object.entries(disciplineMedals[region] || {})
-      .map(([sport, medals], i) => ({
-        key: `${region}_${sport}_${i}`,
+      .map(([sport, medals]) => ({
         sport,
         displaySport: sport.length > 20 ? sport.slice(0, 20) + "…" : sport,
-        gold: medals.gold,
-        silver: medals.silver,
-        bronze: medals.bronze,
+        ...medals,
         total: medals.gold + medals.silver + medals.bronze
       }))
       .sort((a, b) => b.total - a.total || a.sport.localeCompare(b.sport))
@@ -758,7 +787,7 @@ function updateHostCityCharts(city, year) {
       .padding(0.2);
 
     disciplineGroup.selectAll("g.bar")
-      .data(disciplineData, d => d.key)
+      .data(disciplineData, d => `${region}_${d.sport}`)
       .join("g")
       .attr("class", "bar")
       .attr("transform", d => `translate(0,${yDiscipline(d.displaySport)})`)
@@ -772,13 +801,15 @@ function updateHostCityCharts(city, year) {
             .attr("x", offset)
             .attr("width", width)
             .attr("height", yDiscipline.bandwidth())
-            .attr("class", `bar-${key}`);
+            .attr("fill", colors[key]);
           if (width > 15) {
             g.append("text")
               .attr("x", offset + width / 2)
               .attr("y", yDiscipline.bandwidth() / 2)
               .attr("dy", "0.35em")
-              .attr("class", "text")
+              .attr("text-anchor", "middle")
+              .attr("fill", "black")
+              .attr("font-size", "10px")
               .text(value);
           }
           offset += width;
@@ -786,13 +817,12 @@ function updateHostCityCharts(city, year) {
       });
 
     disciplineGroup.selectAll(".bar-label")
-      .data(disciplineData, d => d.key)
+      .data(disciplineData, d => `${region}_${d.sport}`)
       .join("text")
       .attr("class", "bar-label")
       .attr("x", -5)
       .attr("y", d => yDiscipline(d.displaySport) + yDiscipline.bandwidth() / 2)
       .attr("dy", "0.35em")
-      .text(d => d.displaySport)
       .attr("text-anchor", "end")
       .on("mouseover", (event, d) => {
         tooltip
