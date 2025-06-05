@@ -20,8 +20,16 @@
   <svg id="map" width="960" height="700"></svg>
   <svg id="barChart" width="450" height="700"></svg>
   <div id="detailsContainer">
-    <h3>Detalji</h3>
-    <div id="detailsContent">Kliknite na državu ili grad na karti ili odaberite grad za prikaz detalja.</div>
+    <h3></h3>
+  </div>
+  <div id="hostCityPanel">
+      <label for="yearSelect">Odaberite godinu: </label>
+      <select id="yearSelect"></select>
+    </div>
+    <h4>Najuspješnije države</h4>
+    <svg id="topCityCountriesChart" width="960" height="300"></svg>
+    <h4>Najuspješniji sportaši</h4>
+    <svg id="topCityAthletesChart" width="960" height="300"></svg>
   </div>
   <div id="countryChartsContainer" style="display: none;">
     <h3>Detalji po državi</h3>

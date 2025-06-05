@@ -173,3 +173,11 @@ svg {
   border: 1px solid #ccc;
   margin: 2px;
 }
+
+#hostCityPanel,
+#hostCityPanel ~ h4,
+#hostCityPanel ~ svg#topCityCountriesChart,
+#hostCityPanel ~ h4,
+#hostCityPanel ~ svg#topCityAthletesChart {
+  display: none;
+}
