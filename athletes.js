@@ -20,7 +20,6 @@ function renderList(filter = "") {
   athleteList.selectAll("li").remove();
 
   if (filter.trim().length === 0) {
-    // Ako nema unosa, ne prikazuj ništa (ili možeš staviti poruku)
     return;
   }
 
@@ -43,28 +42,21 @@ function renderList(filter = "") {
     });
 }
 
-
-// Postavi aktivni slot i istakni aktivni button
 function selectSlot(index) {
   currentSlotIndex = index;
-
   d3.selectAll(".replace-btn").classed("active", false);
   d3.select(`.replace-btn[data-slot='${index}']`).classed("active", true);
 }
 
-// Na klik na sportaša u listi - zamijeni u aktivnom slotu
 function selectAthlete(athlete) {
   selectedAthletes[currentSlotIndex] = athlete;
   updateView();
 }
-
-// Kada klikneš na dugme "Zamijeni" postavi aktivni slot
 d3.selectAll(".replace-btn").on("click", function () {
   const slot = +d3.select(this).attr("data-slot");
   selectSlot(slot);
 });
 
-// Funkcija za update prikaza sportaša
 function updateView() {
   selectedAthletes.forEach((athlete, i) => {
     const slot = d3.select(`#slot${i + 1}`);
@@ -83,12 +75,10 @@ function updateView() {
 
     const birthYear = athlete.Year - athlete.Age;
 
-    // Skupljanje disciplina i godina natjecanja
     const athleteEvents = athleteData.filter(d => d.ID === athlete.ID);
     const disciplines = Array.from(new Set(athleteEvents.map(d => d.Sport))).join(", ");
     const competitions = Array.from(new Set(athleteEvents.map(d => d.Year))).sort().join(", ");
 
-    // Uzmemo Team iz prvog eventa (pretpostavka da je isti za sve)
     const team = athleteEvents.length > 0 ? athleteEvents[0].Team : athlete.NOC;
 
     info.html(`
@@ -121,43 +111,34 @@ function updateView() {
   });
 }
 
-
 function drawStackedBarChart(data, svg, label) {
-  // Očisti prethodni sadržaj SVG-a
   svg.selectAll("*").remove();
 
-  // Postavi margine i dimenzije unutar SVG elementa
   const margin = { top: 20, right: 20, bottom: 60, left: 50 };
   const width = parseInt(svg.style("width")) - margin.left - margin.right;
   const height = parseInt(svg.style("height")) - margin.top - margin.bottom;
 
-  // Grupa za crtanje grafikona, pomaknuta za margine
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // X skala: kategorije (npr. godine, sportovi)
   const x = d3.scaleBand()
     .domain(data.map(d => d.key))
     .range([0, width])
     .padding(0.3);
 
-  // Y skala: zbroj medalja, linearno
   const y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.Gold + d.Silver + d.Bronze)])
     .nice()
     .range([height, 0]);
 
-  // Boje za slojeve
   const color = d3.scaleOrdinal()
     .domain(["Gold", "Silver", "Bronze"])
     .range(["#FFD700", "#C0C0C0", "#CD7F32"]);
 
-  // Kreiranje stack layouta s ključevima medalja
   const stack = d3.stack()
     .keys(["Gold", "Silver", "Bronze"]);
 
   const stackedData = stack(data);
 
-  // Svaki sloj je grupa sa svojom bojom
   const layers = g.selectAll("g.layer")
     .data(stackedData)
     .enter()
@@ -165,7 +146,6 @@ function drawStackedBarChart(data, svg, label) {
     .attr("class", "layer")
     .attr("fill", d => color(d.key));
 
-  // Dodajemo pravokutnike za svaki segment sloja
   layers.selectAll("rect")
     .data(d => d)
     .enter()
@@ -175,7 +155,6 @@ function drawStackedBarChart(data, svg, label) {
     .attr("height", d => y(d[0]) - y(d[1]))
     .attr("width", x.bandwidth());
 
-  // Dodajemo tekst (broj medalja) na svaki segment ako je veći od 0
   layers.selectAll("text")
   .data(d => d)
   .enter()
@@ -185,17 +164,15 @@ function drawStackedBarChart(data, svg, label) {
     return val > 0 ? val : "";
   })
   .attr("x", d => x(d.data.key) + x.bandwidth() / 2)
-  .attr("y", d => y(d[1]) + (y(d[0]) - y(d[1])) / 2 + 4)  // centriranje vertikalno
+  .attr("y", d => y(d[1]) + (y(d[0]) - y(d[1])) / 2 + 4)  
   .attr("text-anchor", "middle")
   .attr("fill", "black")
   .style("font-size", "11px");
 
-  // Y osa
   g.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(y).ticks(5));
 
-  // X osa
   g.append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height})`)
@@ -204,7 +181,6 @@ function drawStackedBarChart(data, svg, label) {
     .attr("transform", "rotate(0)")
     .style("text-anchor", "middle");
 
-  // Naslov grafa ispod x ose
   g.append("text")
     .attr("x", width / 2)
     .attr("y", height + 45)
@@ -212,10 +188,6 @@ function drawStackedBarChart(data, svg, label) {
     .style("font-weight", "bold")
     .text(label);
 }
-
-
-
-
 
 searchInput.on("input", function () {
   renderList(this.value);
@@ -225,5 +197,5 @@ d3.csv("athlete_events.csv").then(data => {
   athleteData = data;
   allAthletes = Array.from(d3.group(data, d => d.ID), ([id, records]) => records[0]);
   renderList();
-  selectSlot(0); // da inicijalno označi prvi slot kao aktivan
+  selectSlot(0); 
 });

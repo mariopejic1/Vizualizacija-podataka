@@ -56,18 +56,14 @@ Promise.all([
   d3.csv("noc_regions.csv"),
   d3.csv("athlete_events.csv")
 ]).then(([world, nocRegions, athleteData]) => {
-  // Map NOC to region
+
   const nocToRegion = new Map();
   nocRegions.forEach(d => {
     nocToRegion.set(d.NOC, d.region);
   });
 
-  // Filter valid medal entries
   const medalData = athleteData.filter(d => d.Medal === "Gold" || d.Medal === "Silver" || d.Medal === "Bronze");
-  console.log(`Filtered medalData size: ${medalData.length}`); // Debug
-  console.log(`medalData sample:`, medalData.slice(0, 5)); // Debug sample
 
-  // Aggregate medals by country
   const countryMedals = {};
   medalData.forEach(d => {
     const region = nocToRegion.get(d.NOC);
@@ -78,7 +74,6 @@ Promise.all([
     if (d.Medal === "Bronze") countryMedals[region].bronze++;
   });
 
-  // Aggregate medals by host city, year, country, and athlete
 const cityMedals = {};
 medalData.forEach(d => {
   const city = d.City;
@@ -116,9 +111,7 @@ medalData.forEach(d => {
 Object.values(cityMedals).forEach(city => {
   city.years = Array.from(city.years).sort((a, b) => a - b);
 });
-console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
 
-  // Aggregate medals by country and year
   const medalsByYear = {};
   medalData.forEach(d => {
     const region = nocToRegion.get(d.NOC);
@@ -131,7 +124,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     if (d.Medal === "Bronze") medalsByYear[region][year].bronze++;
   });
 
-  // Aggregate medals by athlete and country
   const athleteMedals = {};
   medalData.forEach(d => {
     const region = nocToRegion.get(d.NOC);
@@ -147,7 +139,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     else if (d.Medal === "Bronze") athleteMedals[region][athleteKey].bronze++;
   });
 
-  // Aggregate medals by discipline and country
   const disciplineMedals = {};
   medalData.forEach(d => {
     const region = nocToRegion.get(d.NOC);
@@ -160,7 +151,7 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     if (d.Medal === "Bronze") disciplineMedals[region][sport].bronze++;
   });
 
-  // Map setup
+  
   const projection = d3.geoMercator()
     .scale(160)
     .translate([width / 2, height / 1.5]);
@@ -168,7 +159,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
 
   const mapGroup = svg.append("g").attr("class", "map-group");
 
-  // Draw countries
   mapGroup.selectAll("path")
     .data(world.features)
     .join("path")
@@ -206,7 +196,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       document.getElementById('countryChartsContainer').scrollIntoView({ behavior: 'smooth' });
     });
 
-  // Host cities data
   const hostCitiesData = Object.keys(cityMedals).map(city => ({
     city,
     games: Array.from(cityMedals[city].years).map(year => ({
@@ -214,9 +203,7 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       season: medalData.find(d => d.City === city && +d.Year === year)?.Season || "Summer"
     })).sort((a, b) => a.year - b.year)
   }));
-  console.log(`hostCitiesData:`, hostCitiesData);
 
-  // Draw host cities
   mapGroup.selectAll("g.city")
     .data(hostCitiesData)
     .join("g")
@@ -252,7 +239,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
           tooltip.classed("hidden", true);
         })
         .on("click", (event) => {
-          console.log(`Clicked city: ${d.city}`);
           d3.select("#hostCityWrapper").style("display", "block");
           const year = d.games[0]?.year || cityMedals[d.city].years[0] || 1896;
           updateHostCityCharts(d.city, year);
@@ -271,7 +257,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
         .style("display", "none");
     });
 
-  // Zoom functionality
   const zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on("zoom", (event) => {
@@ -283,7 +268,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     });
   svg.call(zoom);
 
-  // Initial bar chart setup
   const barSvg = d3.select("#barChart");
   const chartMargin = { top: 30, right: 20, bottom: 50, left: 150 };
   const chartWidth = +barSvg.attr("width") - chartMargin.left - chartMargin.right;
@@ -357,11 +341,9 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     .attr("transform", `translate(0,${chartHeight})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
 
-  // Host city panel setup
   let selectedCity = null;
   let selectedYear = null;
 
-  // Year selection
   function updateYearSelect(city, games) {
     selectedCity = city;
     d3.select("#yearSelect")
@@ -379,16 +361,12 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     updateHostCityCharts(selectedCity, selectedYear);
   });
 
-  // Update host city charts
  function updateHostCityCharts(city, year) {
   selectedCity = city;
   selectedYear = year;
-  console.log(`Updating charts for ${city} ${year}`);
 
-  // Show host city wrapper
   d3.select("#hostCityWrapper").style("display", "block");
 
-  // Update year dropdown
   const yearSelect = d3.select("#yearSelect");
   const years = cityMedals[city]?.years || [];
   yearSelect.selectAll("option").remove();
@@ -406,7 +384,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     updateHostCityCharts(city, +this.value);
   });
 
-  // Top countries chart
   const countrySvg = d3.select("#topCityCountriesChart");
   countrySvg.selectAll("*").remove();
   const countryMargin = { top: 20, right: 20, bottom: 50, left: 150 };
@@ -423,7 +400,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     }))
     .sort((a, b) => b.total - a.total || a.region.localeCompare(b.region))
     .slice(0, 10);
-  console.log(`Country data for ${city} ${year}:`, countryData);
 
   if (countryData.length === 0) {
     countrySvg.append("text")
@@ -485,7 +461,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       .call(d3.axisBottom(xCountry).ticks(5).tickFormat(d3.format("d")));
   }
 
-  // Top athletes chart
   const athleteSvg = d3.select("#topCityAthletesChart");
   athleteSvg.selectAll("*").remove();
   const athleteMargin = { top: 20, right: 20, bottom: 50, left: 200 };
@@ -505,7 +480,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     .filter(d => d.total > 0)
     .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
     .slice(0, 10);
-  console.log(`Athlete data for ${city} ${year}:`, athleteData);
 
   if (athleteData.length === 0) {
     athleteSvg.append("text")
@@ -518,7 +492,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       .domain([0, d3.max(athleteData, d => d.total) || 1])
       .range([0, athleteWidth])
       .nice();
-
     const yAthlete = d3.scaleBand()
       .domain(athleteData.map(d => d.displayName))
       .range([0, athleteHeight])
@@ -586,7 +559,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       .call(d3.axisBottom(xAthlete).ticks(5).tickFormat(d3.format("d")));
   }
 
-  // Update details
   const cityData = Object.entries(cityMedals[city]?.medalsByYear[year]?.countries || {})
     .map(([country, medals]) => ({
       country,
@@ -608,7 +580,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
     d3.select("#topAthletesChart").selectAll("*").remove();
     d3.select("#topDisciplinesChart").selectAll("*").remove();
 
-    // Line chart: Medals by year
     const yearData = Object.entries(medalsByYear[region] || {})
       .map(([year, medals]) => ({
         year: +year,
@@ -671,7 +642,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       .attr("class", "axis")
       .call(d3.axisLeft(yYear).ticks(5));
 
-    // Bar chart: Top 10 athletes
     const athleteData = Object.entries(athleteMedals[region] || {})
       .map(([key, medals]) => ({
         key,
@@ -758,7 +728,6 @@ console.log(`Cities in cityMedals:`, Object.keys(cityMedals));
       .attr("class", "axis")
       .call(d3.axisLeft(yAthlete));
 
-    // Bar chart: Top 10 disciplines
     const disciplineData = Object.entries(disciplineMedals[region] || {})
       .map(([sport, medals]) => ({
         sport,
