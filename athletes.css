@@ -3,12 +3,12 @@
 :root {
   --bg: #f5f7fa;
   --white: #ffffff;
-  --gray-light: #e2e8f0; /* Fixed invalid color code */
+  --gray-light: #e2e8f0;
   --gray-dark: #475569;
   --blue: #2563eb;
   --blue-hover: #1d4ed8;
   --border-radius: 8px;
-  --shadow: 0 2px 10px rgba(0, 0, 0, 0.06); /* Fixed shadow syntax */
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -59,34 +59,35 @@ nav a:hover {
 
 .container {
   display: flex;
-  gap: 1rem;
-  padding: 3rem 1rem 1rem;
-  height: calc(100vh - 3rem);
+  gap: 1.5rem;
+  padding: 4rem 1.5rem 1.5rem;
+  height: calc(100vh - 4rem);
   justify-content: center;
   align-items: stretch;
 }
 
 .sidebar {
-  flex: 0 0 250px;
+  flex: 0 0 320px;
   background-color: var(--white);
+  border: 1px solid var(--gray-light);
   border-radius: var(--border-radius);
-  padding: 1rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   height: 100%;
-  text-align: left; /* Align sidebar content to the left */
+  text-align: left;
 }
 
 #search {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.9rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
   border: 1px solid var(--gray-light);
   border-radius: var(--border-radius);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   transition: box-shadow 0.2s;
-  text-align: left; /* Ensure search text is left-aligned */
+  text-align: left;
 }
 
 #search:focus {
@@ -96,20 +97,20 @@ nav a:hover {
 
 #athlete-list {
   list-style: none;
-  max-height: calc(100% - 2.5rem);
+  max-height: calc(100% - 3rem);
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 8px;
   flex-grow: 1;
 }
 
 #athlete-list li {
-  padding: 0.4rem 0.6rem;
-  margin-bottom: 0.2rem;
-  border-radius: var(--border-radius);
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.3rem;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   transition: background 0.2s;
-  text-align: left; /* Left-align athlete list items */
+  text-align: left;
 }
 
 #athlete-list li:hover {
@@ -120,30 +121,31 @@ nav a:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  max-width: 900px;
+  gap: 1rem;
+  max-width: 1200px;
   height: 100%;
 }
 
 .comparison-controls {
   background-color: var(--white);
   border-radius: var(--border-radius);
-  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-light);
+  padding: 0.8rem 1.5rem;
   box-shadow: var(--shadow);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .comparison-controls label {
   font-weight: 500;
   color: var(--gray-dark);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 #comparison-mode {
-  padding: 0.4rem;
-  font-size: 0.9rem;
+  padding: 0.5rem;
+  font-size: 0.95rem;
   border: 1px solid var(--gray-light);
   border-radius: var(--border-radius);
   background-color: var(--white);
@@ -158,41 +160,41 @@ nav a:hover {
 
 .slot-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
   flex-grow: 1;
-  height: calc(100% - 2.5rem);
+  height: calc(100% - 3rem);
 }
 
 .slot {
   background-color: var(--white);
   border-radius: var(--border-radius);
-  padding: 1rem;
+  border: 1px solid var(--gray-light);
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
   height: 100%;
   overflow: hidden;
-  /* Removed box-shadow */
 }
 
 .slot h2 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--gray-light);
-  padding-bottom: 0.3rem;
+  padding-bottom: 0.5rem;
 }
 
 .replace-btn {
   background-color: #9ca3af;
   color: white;
   border: none;
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 1rem;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -209,28 +211,54 @@ nav a:hover {
 .athlete-info {
   background-color: #f8fafc;
   text-align: left;
-  padding: 0.5rem;
-  border-radius: var(--border-radius);
+  padding: 0.8rem;
   border: 1px solid var(--gray-light);
+  border-radius: 6px;
   font-size: 0.8rem;
   color: var(--gray-dark);
-  max-height: 150px; /* Increased height */
+  max-height: 240px;
   overflow-y: auto;
+}
+
+.athlete-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.athlete-info-content p {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.athlete-info-content p strong {
+  font-weight: 600;
+}
+
+.athlete-info-content p span {
+  margin-left: 0.3rem;
 }
 
 .chart {
   width: 100%;
-  height: 250px; /* Increased height */
+  height: 300px;
+  border: 1px solid var(--gray-light);
   border-radius: var(--border-radius);
-  background-color: #f8fafc;
-  padding: 0.3rem;
+  background-color: #fff;
+  padding: 0.5rem;
   overflow: visible;
   display: none;
+  flex-grow: 1;
+  position: relative;
+}
+
+.chart-event {
+  overflow: visible;
 }
 
 #athlete-list::-webkit-scrollbar,
 .athlete-info::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 
 #athlete-list::-webkit-scrollbar-thumb,
@@ -239,23 +267,23 @@ nav a:hover {
   border-radius: 4px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .container {
     flex-direction: column;
-    padding: 2.5rem 0.5rem 0.5rem;
-    height: calc(100vh - 2rem);
+    padding: 3rem 1rem;
+    height: calc(100vh - 3rem);
   }
 
   .sidebar {
     flex: 0 0 auto;
     width: 100%;
-    max-height: 180px;
+    max-height: 250px;
   }
 
   .comparison-controls {
     flex-direction: column;
     align-items: stretch;
-    padding: 0.5rem;
+    padding: 0.75rem;
   }
 
   #comparison-mode {
@@ -264,18 +292,42 @@ nav a:hover {
 
   .slot-container {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 
   .slot {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 
   .chart {
-    height: 200px; /* Adjusted for mobile */
+    height: 250px;
   }
 
   .athlete-info {
-    max-height: 120px; /* Adjusted for mobile */
+    max-height: 200px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 2.5rem 0.5rem;
+  }
+
+  .sidebar {
+    max-height: 200px;
+  }
+
+  .chart {
+    height: 200px;
+  }
+
+  .athlete-info {
+    max-height: 180px;
+    font-size: 0.7rem;
+  }
+
+  .slot-container {
+    gap: 0.75rem;
   }
 }

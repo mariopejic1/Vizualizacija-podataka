@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8" />
-  <title>Sportaši</title>
+  <title>Athletes</title>
   <link rel="stylesheet" href="athletes.css">
   <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -10,58 +10,46 @@
 <body>
   <nav>
     <ul>
-      <li><a href="index.html">Početna</a></li>
-      <li><a href="athletes.html">Sportaši</a></li>
-      <li><a href="comparemedals.html">Medalje po godinama</a></li>
+      <li><a href="index.html">Homepage</a></li>
+      <li><a href="athletes.html">Athletes</a></li>
+      <li><a href="comparemedals.html">Medals by Year</a></li>
     </ul>
   </nav>
 
   <div class="container">
     <div class="sidebar">
-      <input type="text" id="search" placeholder="Pretraži sportaše..." />
+      <input type="text" id="search" placeholder="Search athletes..." />
       <ul id="athlete-list"></ul>
     </div>
     <div class="comparison">
       <div class="comparison-controls">
-        <label for="comparison-mode">Usporedi po:</label>
+        <label for="comparison-mode">Compare by:</label>
         <select id="comparison-mode">
-          <option value="total">Ukupne medalje</option>
-          <option value="year">Medalje po godinama</option>
-          <option value="sport">Medalje po sportovima</option>
-          <option value="event">Medalje po događajima</option>
-          <option value="timeline">Vremenska linija</option>
-          <option value="distribution">Distribucija medalja</option>
-          <option value="metrics">Usporedba metrika</option>
+          <option value="year">Medals by year</option>
+          <option value="event">Medals by dicipline</option>
+          <option value="total">Total medals</option>
         </select>
       </div>
       <div class="slot-container">
         <div class="slot" id="slot1">
           <h2>
-            Sportaš 1
-            <button class="replace-btn" data-slot="0">Postavi</button>
+            Athlete 1
+            <button class="replace-btn" data-slot="0">Set</button>
           </h2>
           <div class="athlete-info"></div>
           <svg class="chart chart-year"></svg>
-          <svg class="chart chart-sport"></svg>
-          <svg class="chart chart-total"></svg>
           <svg class="chart chart-event"></svg>
-          <svg class="chart chart-timeline"></svg>
-          <svg class="chart chart-distribution"></svg>
-          <svg class="chart chart-metrics"></svg>
+          <svg class="chart chart-total"></svg>
         </div>
         <div class="slot" id="slot2">
           <h2>
-            Sportaš 2
-            <button class="replace-btn" data-slot="1">Postavi</button>
+            Athlete 2
+            <button class="replace-btn" data-slot="1">Set</button>
           </h2>
           <div class="athlete-info"></div>
           <svg class="chart chart-year"></svg>
-          <svg class="chart chart-sport"></svg>
-          <svg class="chart chart-total"></svg>
           <svg class="chart chart-event"></svg>
-          <svg class="chart chart-timeline"></svg>
-          <svg class="chart chart-distribution"></svg>
-          <svg class="chart chart-metrics"></svg>
+          <svg class="chart chart-total"></svg>
         </div>
       </div>
     </div>

@@ -2,42 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Početna</title>
+  <title>Home</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <nav>
     <ul>
-      <li><a href="index.html">Početna</a></li>
-      <li><a href="athletes.html">Sportaši</a></li>
-      <li><a href="comparemedals.html">Medalje po godinama</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="athletes.html">Athletes</a></li>
+      <li><a href="comparemedals.html">Medals by Year</a></li>
     </ul>
   </nav>
 
-  <h1>Olimpijske medalje po državama</h1>
+  <h1>Olympic Medals by Country</h1>
   <div id="tooltip" class="hidden"></div>
   <svg id="map" width="960" height="700"></svg>
   <svg id="barChart" width="450" height="700"></svg>
   
   <div id="hostCityWrapper">
+      <h3>Olympic games details</h3>
     <div id="hostCityPanel">
-      <label for="yearSelect">Odaberite godinu: </label>
+      <label for="yearSelect">Select Year: </label>
       <select id="yearSelect"></select>
     </div>
-    <h4>Najuspješnije države</h4>
+    <h4>Top Countries</h4>
     <svg id="topCityCountriesChart" width="960" height="300"></svg>
-    <h4>Najuspješniji sportaši</h4>
+    <h4>Top Athletes</h4>
     <svg id="topCityAthletesChart" width="960" height="300"></svg>
   </div>
   <div id="countryChartsContainer" style="display: none;">
-    <h3>Detalji po državi</h3>
-      <h4>Ukupan broj medalja po natjecanju</h4>
-      <svg id="medalsByYearChart" width="960" height="300"></svg>
-      <h4>10 naujspješnijih sportaša</h4>
-      <svg id="topAthletesChart" width="960" height="300"></svg>
-      <h4>10 najuspješnijih disciplina</h4>
-      <svg id="topDisciplinesChart" width="960" height="300"></svg>
+    <h3>Country Details</h3>
+    <h4>Total Medals by Competition</h4>
+    <svg id="medalsByYearChart" width="960" height="300"></svg>
+    <h4>Top 10 Athletes</h4>
+    <svg id="topAthletesChart" width="960" height="300"></svg>
+    <h4>Top 10 Disciplines</h4>
+    <svg id="topDisciplinesChart" width="960" height="300"></svg>
   </div>
 
   <script src="main.js"></script>
