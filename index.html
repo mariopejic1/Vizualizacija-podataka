@@ -17,11 +17,22 @@
 
   <h1>Olympic Medals by Country</h1>
   <div id="tooltip" class="hidden"></div>
-  <svg id="map" width="960" height="700"></svg>
-  <svg id="barChart" width="450" height="700"></svg>
+  <div id="mainContainer" style="display: flex; justify-content: center; gap: 20px; width: 100%;">
+    <svg id="map" width="1000" height="700"></svg>
+    <div id="barChartContainer" style="flex: 1;">
+      <label for="sort-countries">Sort Countries: </label>
+      <select id="sort-countries">
+        <option value="total" selected>Total Medals</option>
+        <option value="gold">Gold Medals</option>
+        <option value="silver">Silver Medals</option>
+        <option value="bronze">Bronze Medals</option>
+      </select>
+      <svg id="barChart" width="100%" height="600"></svg>
+    </div>
+  </div>
   
   <div id="hostCityWrapper">
-      <h3>Olympic games details</h3>
+    <h3>Olympic games details</h3>
     <div id="hostCityPanel">
       <label for="yearSelect">Select Year: </label>
       <select id="yearSelect"></select>

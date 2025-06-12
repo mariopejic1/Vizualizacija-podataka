@@ -279,24 +279,34 @@ Promise.all([
   svg.call(zoom);
 
   const chartMargin = { top: 30, right: 20, bottom: 50, left: 150 };
-  const chartWidth = +barSvg.attr("width") - chartMargin.left - chartMargin.right;
-  const chartHeight = +barSvg.attr("height") - chartMargin.top - chartMargin.bottom;
+  const chartHeight = 600 - chartMargin.top - chartMargin.bottom;
 
   const chartGroup = barSvg.append("g")
     .attr("transform", `translate(${chartMargin.left},${chartMargin.top})`);
+
+  const colors = {
+    total: "#4682B4",
+    gold: "#FFD700",
+    silver: "#C0C0C0",
+    bronze: "#CD7F32"
+  };
 
   const dataArray = Object.entries(countryMedals).map(([region, d]) => ({
     region,
     ...d,
     total: d.gold + d.silver + d.bronze
-  }));
+  })).filter(d => d.total > 0);
 
-  const topCountries = dataArray
-    .sort((a, b) => d3.descending(a.total, b.total))
-    .slice(0, 10);
+  function updateTopCountriesBar(sortBy = "total") {
+  const chartWidth = barSvg.node().getBoundingClientRect().width - chartMargin.left - chartMargin.right;
 
-  const maxTotal = d3.max(topCountries, d => d.total);
-  const niceMax = Math.ceil(maxTotal / 10) * 10;
+  let sortedCountries = dataArray.slice();
+  sortedCountries.sort((a, b) => d3.descending(a[sortBy], b[sortBy]) || a.region.localeCompare(b.region));
+
+  const topCountries = sortedCountries.slice(0, 10);
+
+  const maxValue = d3.max(topCountries, d => d[sortBy]) || 1;
+  const niceMax = Math.ceil(maxValue / 10) * 10;
 
   const x = d3.scaleLinear()
     .domain([0, niceMax])
@@ -308,67 +318,113 @@ Promise.all([
     .range([0, chartHeight])
     .padding(0.2);
 
-  const colors = {
-    gold: "#FFD700",
-    silver: "#C0C0C0",
-    bronze: "#CD7F32"
-  };
+  const bars = chartGroup.selectAll("g.bar")
+    .data(topCountries, d => d.region);
 
-  chartGroup.selectAll("g.bar")
-    .data(topCountries)
-    .join("g")
+  const barsEnter = bars.enter()
+    .append("g")
     .attr("class", "bar")
-    .attr("transform", d => `translate(0,${y(d.region)})`)
-    .each(function(d) {
-      const g = d3.select(this);
-      let offset = 0;
-      ["gold", "silver", "bronze"].forEach(key => {
-        const value = d[key];
-        const width = x(value);
-        g.append("rect")
-          .attr("x", offset)
-          .attr("width", width)
-          .attr("height", y.bandwidth())
-          .attr("fill", colors[key]);
-        if (width > 15) {
-          g.append("text")
-            .attr("x", offset + width / 2)
-            .attr("y", y.bandwidth() / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "middle")
-            .attr("fill", "black")
-            .attr("font-size", "10px")
-            .attr("font-weight", "bold")
-            .text(value);
-        }
-        offset += width;
-      });
-    });
+    .attr("transform", d => `translate(0,${y(d.region)})`);
 
-  chartGroup.append("g").call(d3.axisLeft(y));
-  chartGroup.append("g")
+  const barsMerge = barsEnter.merge(bars);
+
+  barsMerge.transition()
+    .duration(1000)
+    .attr("transform", d => `translate(0,${y(d.region)})`);
+
+  barsMerge.selectAll("rect")
+    .data(d => [d])
+    .join(
+      enter => enter.append("rect")
+        .attr("class", sortBy)
+        .attr("x", 0)
+        .attr("width", 0)
+        .attr("height", y.bandwidth())
+        .attr("fill", d => colors[sortBy])
+        .call(enter => enter.transition().duration(1000).attr("width", d => x(d[sortBy]))),
+      update => update
+        .transition()
+        .duration(1000)
+        .attr("width", d => x(d[sortBy]))
+        .attr("fill", d => colors[sortBy]),
+      exit => exit.remove()
+    );
+
+  barsMerge.selectAll("text")
+    .data(d => [d])
+    .join(
+      enter => enter.append("text")
+        .attr("class", sortBy)
+        .attr("x", d => x(d[sortBy]) / 2)
+        .attr("y", y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "middle")
+        .attr("fill", "#fff")
+        .attr("font-size", "10px")
+        .attr("font-weight", "bold")
+        .text(d => x(d[sortBy]) > 30 ? d[sortBy] : ""),
+      update => update
+        .transition()
+        .duration(1000)
+        .attr("x", d => x(d[sortBy]) / 2)
+        .text(d => x(d[sortBy]) > 30 ? d[sortBy] : ""),
+      exit => exit.remove()
+    );
+
+  bars.exit().transition().duration(1000).attr("opacity", 0).remove();
+
+  chartGroup.selectAll(".y-axis").data([0])
+    .join("g")
+    .attr("class", "y-axis")
+    .transition()
+    .duration(1000)
+    .call(d3.axisLeft(y));
+
+  chartGroup.selectAll(".x-axis").data([0])
+    .join("g")
+    .attr("class", "x-axis")
     .attr("transform", `translate(0,${chartHeight})`)
+    .transition()
+    .duration(1000)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
+}
 
-  let selectedCity = null;
-  let selectedYear = null;
-
-  function updateYearSelect(city, games) {
-    selectedCity = city;
-    d3.select("#yearSelect")
-      .selectAll("option")
-      .data(games)
-      .join("option")
-      .attr("value", d => d.year)
-      .text(d => `${d.year} (${d.season})`);
-    selectedYear = games[0]?.year || cityMedals[city].years[0] || 1896;
-    d3.select("#yearSelect").property("value", selectedYear);
+function waitForSvgAndInit() {
+  const svgNode = barSvg.node();
+  if (svgNode && svgNode.getBoundingClientRect().width > 0) {
+    d3.select("#sort-countries").property("value", "total");
+    updateTopCountriesBar("total");
+  } else {
+    requestAnimationFrame(waitForSvgAndInit);
   }
+}
 
-  d3.select("#yearSelect").on("change", function() {
-    selectedYear = +this.value;
-    updateHostCityCharts(selectedCity, selectedYear);
-  });
+waitForSvgAndInit();
+
+d3.select("#sort-countries").on("change", function () {
+  updateTopCountriesBar(this.value);
+});
+
+
+    let selectedCity = null;
+    let selectedYear = null;
+
+    function updateYearSelect(city, games) {
+      selectedCity = city;
+      d3.select("#yearSelect")
+        .selectAll("option")
+        .data(games)
+        .join("option")
+        .attr("value", d => d.year)
+        .text(d => `${d.year} (${d.season})`);
+      selectedYear = games[0]?.year || cityMedals[city].years[0] || 1896;
+      d3.select("#yearSelect").property("value", selectedYear);
+    }
+
+    d3.select("#yearSelect").on("change", function() {
+      selectedYear = +this.value;
+      updateHostCityCharts(selectedCity, selectedYear);
+    });
 
   function updateHostCityCharts(city, year) {
     selectedCity = city;
