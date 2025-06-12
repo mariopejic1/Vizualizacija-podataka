@@ -386,6 +386,7 @@ searchInput.on("input", function () {
   renderList(this.value);
 });
 
+//Izvlačenje podataka o sportašima kako bi ih se moglo pretražiti, dobiti podtake o istima i usporediti
 d3.csv("athlete_events.csv").then(data => {
   athleteData = data;
   allAthletes = Array.from(d3.group(data, d => d.ID), ([id, records]) => records[0]);

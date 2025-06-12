@@ -1,3 +1,4 @@
+// izvlačenje podataka o sprtašima poradi dobivanja ukupnog broja medlja za pojedine države
 d3.csv('athlete_events.csv').then(data => {
     const medalData = data.filter(d => d.Medal === "Gold" || d.Medal === "Silver" || d.Medal === "Bronze");
 

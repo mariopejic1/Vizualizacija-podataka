@@ -10,6 +10,7 @@ const barSvg = d3.select("#barChart")
 
 const tooltip = d3.select("#tooltip");
 
+// Hard - kodirani podaci o gradovima domaćinima Olimpijskih igara
 const cityCoordinates = {
   "Athens": [23.7275, 37.9838],
   "Paris": [2.3522, 48.8566],
@@ -55,6 +56,8 @@ const cityCoordinates = {
   "Pyeongchang": [128.3900, 37.3700]
 };
 
+// Učitavanje svih skupova podataka korištenih na početnoj stranici poradi stvaranja interaktivne karte, rada s kartom, bojanja karte 
+// prikaza detalja o državama i gradovima domaćinima, prikaz najuspješnijih država 
 Promise.all([
   d3.json("world.geo.json"),
   d3.csv("noc_regions.csv"),
