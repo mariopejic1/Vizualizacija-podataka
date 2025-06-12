@@ -78,7 +78,7 @@ function updateView() {
     Object.values(charts).forEach(chart => chart.style("display", "none"));
 
     if (!athlete) {
-      info.html("Nema odabranog sportaša.");
+      info.html("Athlete not found.");
       Object.values(charts).forEach(chart => chart.selectAll("*").remove());
       return;
     }
@@ -113,7 +113,7 @@ function updateView() {
 
       const yearData = Array.from(groupByYear, ([year, val]) => ({ key: year, ...val }));
       charts.year.style("display", "block");
-      drawStackedBarChart(yearData, charts.year, "Medalje po godinama");
+      drawStackedBarChart(yearData, charts.year, "Medals by Olympic games");
     } else if (comparisonMode === "total") {
       const totalMedals = {
         Gold: athleteMedals.filter(d => d.Medal === "Gold").length,
@@ -122,7 +122,7 @@ function updateView() {
       };
 
       charts.total.style("display", "block");
-      drawTotalBarChart(totalMedals, charts.total, "Ukupne medalje");
+      drawTotalBarChart(totalMedals, charts.total, "Total medals");
     } else if (comparisonMode === "event") {
       const groupByEvent = d3.rollup(athleteMedals, v => ({
         Gold: v.filter(d => d.Medal === "Gold").length,
@@ -139,7 +139,7 @@ function updateView() {
       })).filter(d => d.total > 0);
 
       charts.event.style("display", "block");
-      drawEventBarChart(eventData, charts.event, "Medalje po događajima");
+      drawEventBarChart(eventData, charts.event, "Medals by disciplines");
     }
   });
 }
@@ -389,7 +389,6 @@ searchInput.on("input", function () {
 d3.csv("athlete_events.csv").then(data => {
   athleteData = data;
   allAthletes = Array.from(d3.group(data, d => d.ID), ([id, records]) => records[0]);
-  console.log("Athlete data loaded:", allAthletes.length, "unique athletes");
   renderList();
   selectSlot(0);
 });
